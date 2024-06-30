@@ -1,0 +1,138 @@
+--Creating Tables and Columns
+
+CREATE TABLE sales.categories (
+    category_id VARCHAR(100) PRIMARY KEY,
+    name VARCHAR(100),
+	status VARCHAR(20),
+	description VARCHAR(500)
+);
+
+CREATE TABLE sales.cities (
+    city_id VARCHAR(100) PRIMARY KEY,
+    name VARCHAR(100),
+	province VARCHAR(20),
+	country VARCHAR(100),
+	status VARCHAR(20)
+);
+
+CREATE TABLE sales.customers (
+    customer_id VARCHAR(100) PRIMARY KEY,
+    name VARCHAR(100),
+	phone VARCHAR(50),
+	location VARCHAR(50),
+	status VARCHAR(20)
+);
+
+
+CREATE TABLE sales.items (
+    item_id VARCHAR(100) PRIMARY KEY,
+    order_id VARCHAR(100),
+	product_id VARCHAR(100),
+	amount float,
+	status VARCHAR(20),
+	item_timestamp timestamp
+);
+
+
+CREATE TABLE sales.orders (
+    order_id VARCHAR(100) PRIMARY KEY,
+    customer_id VARCHAR(100),
+	status VARCHAR(50),
+	order_time timestamp,
+	total_amount float
+);
+
+
+CREATE TABLE sales.products (
+    product_id VARCHAR(100) PRIMARY KEY,
+    name VARCHAR(50),
+	supplier_id VARCHAR(100),
+	category VARCHAR(50),
+	price float,
+	stock_available int,
+	status VARCHAR(50),
+	product_createtimestamp timestamp
+);
+
+
+CREATE TABLE sales.suppliers (
+    supplier_id VARCHAR(100) PRIMARY KEY,
+    name VARCHAR(100),
+	phone VARCHAR(100),
+	location VARCHAR(50),
+	status VARCHAR(50),
+	category VARCHAR(50)
+);
+
+-- Import data into sales.categories
+COPY sales.categories(category_id, name, status, description)
+FROM 'C:\Users\mahsa\Desktop\Bytewise Fellowship\Daily Tasks\Month 1\Task 4\Resources\categories.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- Import data into sales.cities
+COPY sales.cities(city_id, name, province, country, status)
+FROM 'C:\Users\mahsa\Desktop\Bytewise Fellowship\Daily Tasks\Month 1\Task 4\Resources\cities.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- Import data into sales.customers
+COPY sales.customers(customer_id, name, phone, location, status)
+FROM 'C:\Users\mahsa\Desktop\Bytewise Fellowship\Daily Tasks\Month 1\Task 4\Resources\customers.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- Import data into sales.items
+COPY sales.items(item_id, order_id, product_id, amount, status, item_timestamp)
+FROM 'C:\Users\mahsa\Desktop\Bytewise Fellowship\Daily Tasks\Month 1\Task 4\Resources\items.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- Import data into sales.orders
+COPY sales.orders(order_id, customer_id, status, order_time, total_amount)
+FROM 'C:\Users\mahsa\Desktop\Bytewise Fellowship\Daily Tasks\Month 1\Task 4\Resources\orders.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- Import data into sales.products
+COPY sales.products(product_id, name, supplier_id, category, price, stock_available, status, product_createtimestamp)
+FROM 'C:\Users\mahsa\Desktop\Bytewise Fellowship\Daily Tasks\Month 1\Task 4\Resources\products.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- Import data into sales.suppliers
+COPY sales.suppliers(supplier_id, name, phone, location, status, category)
+FROM 'C:\Users\mahsa\Desktop\Bytewise Fellowship\Daily Tasks\Month 1\Task 4\Resources\suppliers.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- Question 1
+SELECT name AS customer_name
+FROM sales.customers
+ORDER BY customer_name;
+
+-- Question 2
+SELECT name AS product_name, price
+FROM sales.products
+ORDER BY price;
+
+-- Question 3
+SELECT name AS supplier_name
+FROM sales.suppliers
+WHERE name LIKE 'A%'
+ORDER BY name;
+
+-- Question 4
+SELECT *
+FROM sales.items
+ORDER BY status NULLS FIRST;
+
+-- Question 5
+SELECT *
+FROM sales.products
+ORDER BY category, PRICE DESC
+
+-- Question 6
+SELECT name AS customer_names, phone
+FROM sales.customers
+ORDER BY RIGHT(phone,4)
