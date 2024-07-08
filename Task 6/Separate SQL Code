@@ -1,0 +1,134 @@
+-- Query 1
+	
+SELECT 
+	c.name, 
+	c.phone, 
+	o.order_id, 
+	o.order_time, 
+	i.product_id, 
+	p.name AS product_name
+FROM 
+	sales.customers AS c
+RIGHT JOIN 
+	sales.orders AS o
+ON 
+	c.customer_id = o.customer_id
+LEFT JOIN 
+	sales.items AS i
+ON 
+	o.order_id = i.order_id
+LEFT JOIN 
+	sales.products AS p
+ON 
+	i.product_id = p.product_id
+
+
+-- Query 2
+		
+SELECT 
+	p.name AS product_name, 
+	p.category AS product_category, 
+	s.name AS supplier_name, 
+	s.phone AS supplier_phone, 
+	s.category AS supplier_category 
+FROM 
+	sales.products AS p
+INNER JOIN 
+	sales.suppliers AS s
+ON 
+	p.supplier_id = s.supplier_id
+
+
+-- Query 3
+
+SELECT 
+	o.order_id, 
+	o.status, 
+	o.order_time, 
+	o.total_amount AS order_amount, 
+	p.name AS product_name, 
+	i.amount AS item_amount 
+FROM 
+	sales.orders AS o
+LEFT JOIN 
+	sales.items AS i
+ON 
+	o.order_id = i.order_id
+LEFT JOIN 
+	sales.products AS p
+ON 
+	i.product_id = p.product_id
+ORDER BY
+	o.order_id
+
+
+
+
+-- Query 4
+
+SELECT 
+	s.name AS supplier_name, 
+	s.phone, s.location AS city, 
+	c.country, 
+	p.name AS product_name
+FROM 
+	sales.suppliers AS s
+LEFT JOIN 
+	sales.cities AS c
+ON 
+	s.location = c.name
+LEFT JOIN 
+	sales.products AS p
+ON 
+	s.supplier_id = p.supplier_id
+
+
+-- Query 5
+
+WITH RankedOrders AS (
+    SELECT 
+        o.customer_id,
+        RANK() OVER (PARTITION BY o.customer_id ORDER BY o.order_time DESC) AS order_rank_for_customer,
+        o.order_id, 
+        o.order_time,
+        c.name, 
+        c.location, 
+        p.name AS product_name, 
+        p.category AS product_category, 
+        p.price AS product_price
+    FROM 
+        sales.orders AS o
+    LEFT JOIN 
+        sales.customers AS c
+    ON 
+        o.customer_id = c.customer_id
+    LEFT JOIN
+        sales.items AS i
+    ON 
+        o.order_id = i.order_id
+    LEFT JOIN
+        sales.products AS p
+    ON 
+        i.product_id = p.product_id
+)
+SELECT 
+	customer_id, 
+	name AS customer_name, 
+	location AS customer_location, 
+	order_id, 
+	order_time, 
+	product_name, 
+	product_category, 
+	product_price
+FROM 
+	RankedOrders
+WHERE 
+	order_rank_for_customer = 1
+ORDER BY 
+	customer_id DESC;
+
+
+
+
+
+
