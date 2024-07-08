@@ -1,0 +1,93 @@
+-- Query 1
+
+SELECT 
+	item_id, 
+	order_id, 
+	amount,
+	(amount/(SUM(amount) OVER (PARTITION BY order_id)))*100 AS percentage_of_order_total
+FROM 
+	sales.items
+ORDER BY 
+	order_id
+
+
+-- Query 2
+
+SELECT 
+	order_id, 
+	total_amount,
+	customer_id,
+	rank() OVER (PARTITION BY customer_id ORDER BY total_amount DESC ) AS rank 
+FROM 
+	sales.orders
+ORDER BY 
+	customer_id
+
+
+
+-- Query 2
+
+SELECT 
+	order_id, 
+	total_amount,
+	customer_id,
+	rank() OVER (PARTITION BY customer_id ORDER BY total_amount DESC ) AS rank 
+FROM 
+	sales.orders
+ORDER BY 
+	customer_id
+
+
+-- Query 3
+
+SELECT 
+	suppliers.supplier_id AS supplier_id,
+	suppliers.name AS supplier_name,
+	AVG(products.price) AS avg_price
+FROM 
+	sales.suppliers
+RIGHT JOIN 
+	sales.products 
+ON 
+	suppliers.supplier_id = products.supplier_id
+GROUP BY 
+	suppliers.supplier_id,
+	suppliers.name
+
+
+
+-- Query 4
+
+SELECT 
+	category, 
+	COUNT(product_id) AS count
+FROM 
+	sales.products
+GROUP BY 
+	category
+ORDER BY 
+	category 
+
+	
+-- No join or anything because all are same and no category_id available.
+
+
+
+-- Query 5
+
+SELECT 
+	c.name, 
+	c.phone, 
+	COALESCE(SUM(o.total_amount),0) AS amount_per_customer
+FROM 
+	sales.orders as o
+RIGHT JOIN 
+	sales.customers as c
+ON 
+	c.customer_id = o.customer_id
+GROUP BY 
+	c.name, c.phone
+ORDER BY 
+	amount_per_customer
+
+
