@@ -1,0 +1,81 @@
+import pandas as pd
+from sqlalchemy import create_engine
+
+# Read the CSV file
+file_path = 'dataset.csv'
+sales_data = pd.read_csv(file_path)
+
+# Display the first few rows of the dataframe
+print(sales_data.head())
+
+# Get the number of remaining rows and columns in the DataFrame
+rows, columns = sales_data.shape
+
+print(f"Remaining rows: {rows}")
+print(f"Remaining columns: {columns}")
+
+
+# Ensure order_id is an integer
+sales_data['order_id'] = pd.to_numeric(sales_data['order_id'], errors = 'coerce').dropna().astype(int)
+
+
+# Get the number of remaining rows and columns in the DataFrame
+rows, columns = sales_data.shape
+
+print(f"Remaining rows: {rows}")
+print(f"Remaining columns: {columns}")
+
+
+# Remove rows where product_id is 0
+sales_data = sales_data[sales_data['product_id'] != 0]
+
+
+
+# Get the number of remaining rows and columns in the DataFrame
+rows, columns = sales_data.shape
+
+print(f"Remaining rows: {rows}")
+print(f"Remaining columns: {columns}")
+
+# Cap prices at 1500 Rs
+    # Convert 'amount' column to float
+sales_data['amount'] = sales_data['amount'].astype(float)
+
+    # Cap prices at 1500 Rs
+sales_data['amount'] = sales_data['amount'].apply(lambda x: 1500.0 if x > 1500 else x)
+
+# Get the number of remaining rows and columns in the DataFrame
+rows, columns = sales_data.shape
+print(f"Remaining rows: {rows}")
+print(f"Remaining columns: {columns}")
+
+
+# Remove rows where status is null
+sales_data = sales_data[sales_data['status'].notnull()]
+
+# Get the number of remaining rows and columns in the DataFrame
+rows, columns = sales_data.shape
+print(f"Remaining rows: {rows}")
+print(f"Remaining columns: {columns}")
+
+
+# Remove duplicates
+sales_data = sales_data.drop_duplicates()
+
+# Get the number of remaining rows and columns in the DataFrame
+rows, columns = sales_data.shape
+print(f"Remaining rows: {rows}")
+print(f"Remaining columns: {columns}")
+
+# Print only 'order_id' and 'amount' columns
+print(sales_data[['order_id', 'product_id', 'amount', 'status']])  
+
+
+# Create a connection to the PostgreSQL database
+engine = create_engine('postgresql+psycopg2://postgres:Kit.kat12345@localhost:5432/SalesManagement')
+
+# Define the table schema
+table_name = 'sales_data_cleaned'
+sales_data.to_sql(table_name, engine, schema = 'sales', if_exists = 'replace', index = False)
+
+print(f"Data successfully loaded into the table '{table_name}' in the PostgreSQL database.")
